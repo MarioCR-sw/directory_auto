@@ -25,6 +25,7 @@ replay_pid*
 
 ### VisualStudioCode ###
 .vscode/*
+.vscode
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
@@ -41,4 +42,6 @@ replay_pid*
 # Ignore all local history of files
 .history
 .ionide
-.vscode
+
+.target
+.example
