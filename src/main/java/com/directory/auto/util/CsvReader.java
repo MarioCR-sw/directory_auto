@@ -10,22 +10,53 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermissions;
 
-public class CsvReader {
+import org.apache.commons.lang3.SystemUtils;
 
-    public void parseCsv(String source) throws IOException {
+public class CsvReader {
+    private String source;
+    private String permissions;
+
+    public CsvReader(String source, String permissions) {
+        this.source = source;
+        this.permissions = permissions;
+    }
+
+    public void parseCsv() throws IOException {
         File csvFile = new File(source);
+        String csvSplitBy = ";";
+
+        if(SystemUtils.IS_OS_LINUX) {
+            parseCsvLinux(csvFile, csvSplitBy);
+        } else if(SystemUtils.IS_OS_WINDOWS) {
+            parseCsvWin(csvFile, csvSplitBy);
+        }
+    }
+
+    private void parseCsvLinux(File csvFile, String csvSplitBy) throws IOException {
         String line, fileSource, destination;
-        String cvsSplitBy = ";";
-        String permissions = "rwxrwxrwx";
 
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             while ((line = br.readLine()) != null) {
-                String[] addresses = line.split(cvsSplitBy);
+                String[] addresses = line.split(csvSplitBy);
                 fileSource = addresses[0];
                 destination = addresses[1];
 
-                createDirectoriesLinux(fileSource, permissions);
-                //createDirectoriesWin(destination);
+                createDirectoriesLinux(destination, permissions);
+                moveFiles(fileSource, destination);
+            }
+        }
+    }
+
+    private void parseCsvWin(File csvFile, String csvSplitBy) throws IOException {
+        String line, fileSource, destination;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            while ((line = br.readLine()) != null) {
+                String[] addresses = line.split(csvSplitBy);
+                fileSource = addresses[0];
+                destination = addresses[1];
+
+                createDirectoriesWin(destination);
                 moveFiles(fileSource, destination);
             }
         }
