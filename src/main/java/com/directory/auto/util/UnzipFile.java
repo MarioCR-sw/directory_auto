@@ -49,9 +49,8 @@ public class UnzipFile {
                 fileHeader = fileHeaders.get(i);
                 i++;
             } while (!checkForDirectory(fileHeader) && i < size);
-            
             folderName = getFolderNameFromFileHeader(fileHeader);
-
+            
             zipFile.extractAll(destination);
             zipFile.close();
 
@@ -60,6 +59,9 @@ public class UnzipFile {
         } catch (ZipException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Zip file \"" + source + "\" has no contents or doesn't exist.");
             e.printStackTrace();
         }
     }
