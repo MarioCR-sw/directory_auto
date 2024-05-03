@@ -63,10 +63,17 @@ public class CsvReader {
     }
 
     private void createDirectoriesLinux(String destination, String permissions) throws IOException {
-        Files.createDirectories(
-            Paths.get(destination), 
-            PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString(permissions))
-        );
+        Path destPath = Paths.get(destination);
+        
+        if (Files.exists(destPath)) {
+            Files.setPosixFilePermissions(destPath,
+            PosixFilePermissions.fromString(permissions));
+        } else {
+            Files.createDirectories(
+                destPath, 
+                PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString(permissions))
+            );
+        }
     }
 
     private void createDirectoriesWin(String destination) throws IOException {
