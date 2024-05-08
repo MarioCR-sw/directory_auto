@@ -20,6 +20,7 @@ public class UnzipFile {
         if(files != null && files.length != 0) {
             this.source = files[0].getName();
         } else {
+            System.out.println("Exception in no-arguments constructor of class UnzipFile");
             throw new RuntimeException("There's no zip file in this folder.");
         }
 
@@ -38,13 +39,15 @@ public class UnzipFile {
     }
 
     public void zipFunction() {
-        ZipFile zipFile = new ZipFile(source);
-        try {
+        try (ZipFile zipFile = new ZipFile(source)) {
             List<FileHeader> fileHeaders = zipFile.getFileHeaders();
             FileHeader fileHeader;
-            int i = 0;
             int size = fileHeaders.size();
+            int i = 0;
 
+            //Gets the folder name inside the archive for deletion at the end.
+            //Should get the folder name from CsvReader after reading the path to the files,
+            //but that might be a little more complex than initially thought.
             do {
                 fileHeader = fileHeaders.get(i);
                 i++;
@@ -57,10 +60,13 @@ public class UnzipFile {
             System.out.println("Zip file \"" + source + "\" successfully extracted.");
             System.out.println();
         } catch (ZipException e) {
+            System.out.println("Exception in method zipFunction() of class UnzipFile");
             e.printStackTrace();
         } catch (IOException e) {
+            System.out.println("Exception in method zipFunction() of class UnzipFile");
             e.printStackTrace();
         } catch (IndexOutOfBoundsException e) {
+            System.out.println("Exception in method zipFunction() of class UnzipFile");
             System.out.println("Zip file \"" + source + "\" has no contents or doesn't exist.");
             e.printStackTrace();
         }

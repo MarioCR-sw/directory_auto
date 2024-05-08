@@ -15,8 +15,8 @@ public class Main {
         uzf.zipFunction();
 
         CsvReader csv = new CsvReader(csvFile, permissions);
-        csv.parseCsv();
 
+        csv.parseCsv();
         uzf.deleteZip();
     }
 }

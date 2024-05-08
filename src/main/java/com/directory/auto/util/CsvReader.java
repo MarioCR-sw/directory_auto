@@ -40,9 +40,11 @@ public class CsvReader {
                 String[] addresses = line.split(csvSplitBy);
                 fileSource = addresses[0];
                 destination = addresses[1];
-
+    
                 createDirectoriesLinux(destination, permissions);
-                moveFiles(fileSource, destination);
+                if(!fileSource.isEmpty() && fileSource != null) {
+                    moveFiles(fileSource, destination);
+                }
             }
         }
     }
@@ -57,7 +59,10 @@ public class CsvReader {
                 destination = addresses[1];
 
                 createDirectoriesWin(destination);
-                moveFiles(fileSource, destination);
+                System.out.println();
+                if(!fileSource.isEmpty() && fileSource != null) {
+                    moveFiles(fileSource, destination);
+                }
             }
         }
     }
@@ -65,19 +70,27 @@ public class CsvReader {
     private void createDirectoriesLinux(String destination, String permissions) throws IOException {
         Path destPath = Paths.get(destination);
         
-        if (Files.exists(destPath)) {
-            Files.setPosixFilePermissions(destPath,
-            PosixFilePermissions.fromString(permissions));
-        } else {
+        if (!Files.exists(destPath)) {
             Files.createDirectories(
                 destPath, 
                 PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString(permissions))
             );
+
+            System.out.print("Directory \"" + destination + "\" created,");
+        } else {
+            System.out.print("Directory \"" + destination + "\" already exists,");
         }
+
+        Files.setPosixFilePermissions(
+                destPath,
+                PosixFilePermissions.fromString(permissions));
+                
+        System.out.println(" given \"" + permissions + "\" permissions to it.");
     }
 
     private void createDirectoriesWin(String destination) throws IOException {
         Files.createDirectories(Paths.get(destination));
+        System.out.println("Directory \"" + destination + "\" created.");
     }
 
     private void moveFiles(String source, String destination) throws IOException {
@@ -87,5 +100,6 @@ public class CsvReader {
         Files.move(sourcePath, destinationPath.resolve(sourcePath.getFileName()), StandardCopyOption.REPLACE_EXISTING);
 
         System.out.println("File \"" + sourcePath.getFileName() + "\" moved to \"" + destination + "\"");
+        System.out.println();
     }
 }
